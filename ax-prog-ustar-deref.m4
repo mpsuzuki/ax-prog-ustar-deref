@@ -344,9 +344,9 @@ AC_DEFUN([AX_PAX_OUTPUT_USTAR],[
   AC_MSG_CHECKING([whether $1 is pax with '-x ustar' and '-L'])
 
   tf=`mktemp ax_pax_real_XXXXXX.txt`
-  AX_CHECK_TAR_MAGIC([$1 -w -x ustar -L -f - $tf],[$tf],[
+  AX_CHECK_TAR_MAGIC([$1 -w -x ustar -L $tf],[$tf],[
     tf=`mktemp ax_pax_link_XXXXXX.lnk`
-    AX_CHECK_TAR_SYMLINK([$1 -w -x ustar -L -f - $tf],[$tf],
+    AX_CHECK_TAR_SYMLINK([$1 -w -x ustar -L $tf],[$tf],
                          [ax_cv_pax=yes],[ax_cv_pax=no])
   ],[ax_cv_pax=no])
   if test "x${ax_cv_pax}" = xyes
