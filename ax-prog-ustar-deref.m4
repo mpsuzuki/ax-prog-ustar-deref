@@ -171,11 +171,12 @@ AC_DEFUN([AX_CHECK_CPIO_IS_GNU_2_0_OR_BSDCPIO],[
 dnl
 dnl AX_CHECK_TAR_MAGIC()
 dnl   $1 = command to be tested, like "tar cf - conftest.txt"
-dnl   $2 = file to be removed after test, like "conftest.txt"
+dnl   $2 = file to create & remove, like "conftest.txt"
 dnl   $3 = action if output is ustar
 dnl   $4 = action if output is not ustar
 dnl
 AC_DEFUN([AX_CHECK_TAR_MAGIC],[
+  echo real > $2
   ax_tar_magic=`$1 | od -c -A n -j 257 -N 5 | tr -d " "`
   ax_tar_version=`$1 | od -t x1 -A n -j 263 -N 2 | tr -d " "`
   rm -f $2
@@ -200,13 +201,12 @@ dnl
 dnl NOTE: this macro does not check "ln -s" availability.
 dnl
 AC_DEFUN([AX_CHECK_TAR_SYMLINK],[
-  touch $2
-  ax_real_txt=`mktemp ax_real_XXXXXX.txt`
-  echo real > "${ax_real_txt}"
+  rm -f ax_real.txt
+  echo real > ax_real.txt
   rm -f $2
-  ln -s "${ax_real_txt}" $2
+  ln -s ax_real.txt $2
   ax_tar_typeflag=`$1 | od -A n -j 156 -c -N 1 | tr -d " "`
-  rm -f "${ax_real_txt}" $2
+  rm -f ax_real.txt $2
   if test "x${ax_tar_typeflag}" = "x0"
   then
     :
@@ -234,9 +234,9 @@ dnl
 AC_DEFUN([AX_GNUTAR_OUTPUT_USTAR],[
   AC_MSG_CHECKING([whether $1 is GNU tar with '--format=ustar' and '-h'])
   ax_cv_gnutar=yes
-  tf=`mktemp ax_gnutar_real_XXXXXX.txt`
+  tf=ax_gnutar_real.txt
   AX_CHECK_TAR_MAGIC(  [$1 c --format=ustar -f - $tf],[$tf],[
-    tf=`mktemp ax_gnutar_link_XXXXXX.lnk`
+    tf=ax_gnutar_link.lnk
     AX_CHECK_TAR_SYMLINK([$1 c --format=ustar -h -f - $tf],[$tf],[ax_cv_gnutar=yes])
   ],[ax_cv_gnutar=no])
   if test "x${ax_cv_gnutar}" = xyes
@@ -265,9 +265,9 @@ dnl
 AC_DEFUN([AX_BSDTAR_OUTPUT_USTAR],[
   AC_MSG_CHECKING([whether $1 is BSD tar with '--format ustar' and '-h'])
   ax_cv_bsdtar=yes
-  tf=`mktemp ax_bsdtar_real_XXXXXX.txt`
+  tf=ax_bsdtar_real.txt
   AX_CHECK_TAR_MAGIC([$1 c --format ustar -f - $tf],[$tf],[
-    tf=`mktemp ax_bsdtar_link_XXXXXX.lnk`
+    tf=ax_bsdtar_link.lnk
     AX_CHECK_TAR_SYMLINK([$1 c --format ustar -h -f - $tf],[$tf],[ax_cv_bsdtar=yes])
   ],[ax_cv_bsdtar=no])
   if test "x${ax_cv_bsdtar}" = xyes
@@ -314,11 +314,11 @@ AC_DEFUN([AX_TAR_OUTPUT_USTAR],[
   ax_cv_tar=yes
   unset ax_cv_tar_deref
 
-  tf=`mktemp ax_tar_real_XXXXXX.txt`
+  tf=ax_tar_real.txt
   AX_CHECK_TAR_MAGIC([$1 c -f - $tf],[$tf],[
-    tf=`mktemp ax_tar_link_XXXXXX.lnk`
+    tf=ax_tar_link.lnk
     AX_CHECK_TAR_SYMLINK([$1 c -h -f - $tf],[$tf],[ax_cv_tar_deref="-h"],[
-      tf=`mktemp ax_tar_link_XXXXXX.lnk`
+      tf=ax_tar_link.lnk
       AX_CHECK_TAR_SYMLINK([$1 c -L -f - $tf],[$tf],[ax_cv_tar_deref="-L"],[ax_cv_tar=no])
     ])
   ],[ax_cv_tar=no])
@@ -343,9 +343,9 @@ dnl
 AC_DEFUN([AX_PAX_OUTPUT_USTAR],[
   AC_MSG_CHECKING([whether $1 is pax with '-x ustar' and '-L'])
 
-  tf=`mktemp ax_pax_real_XXXXXX.txt`
+  tf=ax_pax_real.txt
   AX_CHECK_TAR_MAGIC([$1 -w -x ustar -L $tf],[$tf],[
-    tf=`mktemp ax_pax_link_XXXXXX.lnk`
+    tf=ax_pax_link.lnk
     AX_CHECK_TAR_SYMLINK([$1 -w -x ustar -L $tf],[$tf],
                          [ax_cv_pax=yes],[ax_cv_pax=no])
   ],[ax_cv_pax=no])
@@ -369,9 +369,9 @@ dnl
 AC_DEFUN([AX_CPIO_OUTPUT_USTAR],[
   AC_MSG_CHECKING([whether $1 supports '-H ustar' and '-L'])
 
-  tf=`mktemp ax_cpio_real_XXXXXX.txt`
+  tf=ax_cpio_real.txt
   AX_CHECK_TAR_MAGIC([echo $tf | $1 -o -H ustar 2>/dev/null],[$tf],[
-    tf=`mktemp ax_cpio_link_XXXXXX.lnk`
+    tf=ax_cpio_link.txt
     AX_CHECK_TAR_SYMLINK([echo $tf | $1 -o -H ustar -L 2>/dev/null],[$tf],
       [ax_cv_cpio=yes],[ax_cv_cpio=no])
   ],[ax_cv_cpio=no])
