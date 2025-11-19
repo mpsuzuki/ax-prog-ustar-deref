@@ -106,6 +106,8 @@ AC_DEFUN([AX_CHECK_TAR_IS_GNU_1_12_OR_BSDTAR],[
             AC_MSG_RESULT([yes, libarchive bsdtar ${ax_cv_version_number}])
             ax_tar_is_gnu_1_12_or_bsdtar=yes
             ;;
+          *)
+            ;;
         esac
       fi
     ])
