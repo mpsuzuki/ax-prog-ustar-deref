@@ -1,4 +1,47 @@
 dnl
+dnl _AX_CHECK_VERSION()
+dnl   $1 = command to be tested
+dnl   $2 = action if "--version" is supported
+dnl   $3 = action if "--version" is not supported
+dnl
+AC_DEFUN([_AX_CHECK_VERSION],[
+  ax_have_version=no
+  for opt_ver in "--version" "-v" "-V"
+  do
+    ax_have_version=`($1 $opt_ver 1>/dev/null 2>/dev/null </dev/null && echo yes) || echo no`
+    ax_cv_version=`$1 $opt_ver 2>&1 | head -1 | tr "\t" " "`
+    ax_cv_version_lower=`echo ${ax_cv_version} | tr ' A-Z[[]](){}' '_a-z______'`
+    if test "x${ax_have_version}" = xyes -a "x${ax_cv_version}" != x
+    then
+      break
+    fi
+  done
+
+  if test "x${ax_have_version}" = xyes
+  then
+    ax_cv_version_has_gnu=no
+    ax_cv_version_has_llvm=no
+    ax_cv_version_has_bsd=no
+    ax_cv_version_has_apple=no
+    ax_cv_version_has_microsoft=no
+    case "${ax_cv_version_lower}" in
+      *gnu*) ax_cv_version_has_gnu=yes ;;
+      *bsd*) ax_cv_version_has_bsd=yes ;;
+      *llvm*) ax_cv_version_has_llvm=yes;;
+      *apple*) ax_cv_version_has_apple=yes;;
+      *microsoft*) ax_cv_version_has_microsoft=yes;;
+    esac
+    ax_cv_version_number=`echo ${ax_cv_version} | sed -n 's/.* \([[0-9]][[0-9.]]*\).*/\1/p'`
+    $2
+  else
+    :
+    $3
+  fi
+])
+
+
+
+dnl
 dnl AX_CHECK_TAR_MAGIC()
 dnl   $1 = command to be tested, like "tar cf - conftest.txt"
 dnl   $2 = file to be removed after test, like "conftest.txt"
