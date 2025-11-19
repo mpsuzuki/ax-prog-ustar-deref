@@ -367,7 +367,7 @@ dnl   $2 = action if given command generates ustar
 dnl   $3 = action if we cannot found an option to generate ustar
 dnl
 AC_DEFUN([AX_CPIO_OUTPUT_USTAR],[
-  AC_MSG_CHECKING([whether $1 is GNU or SysVR4 cpio with '-H ustar' and '-L'])
+  AC_MSG_CHECKING([whether $1 supports '-H ustar' and '-L'])
 
   tf=`mktemp ax_cpio_real_XXXXXX.txt`
   AX_CHECK_TAR_MAGIC([echo $tf | $1 -o -H ustar 2>/dev/null],[$tf],[
