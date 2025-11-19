@@ -24,13 +24,11 @@ AC_DEFUN([_AX_CHECK_VERSION],[
     ax_cv_version_has_bsd=no
     ax_cv_version_has_apple=no
     ax_cv_version_has_microsoft=no
-    case "${ax_cv_version_lower}" in
-      *gnu*) ax_cv_version_has_gnu=yes ;;
-      *bsd*) ax_cv_version_has_bsd=yes ;;
-      *llvm*) ax_cv_version_has_llvm=yes;;
-      *apple*) ax_cv_version_has_apple=yes;;
-      *microsoft*) ax_cv_version_has_microsoft=yes;;
-    esac
+    expr "${ax_cv_version_lower}" : ".*gnu" > /dev/null && ax_cv_version_has_gnu=yes
+    expr "${ax_cv_version_lower}" : ".*bsd" > /dev/null && ax_cv_version_has_bsd=yes
+    expr "${ax_cv_version_lower}" : ".*llvm" > /dev/null && ax_cv_version_has_llvm=yes
+    expr "${ax_cv_version_lower}" : ".*apple" > /dev/null && ax_cv_version_has_apple=yes
+    expr "${ax_cv_version_lower}" : ".*microsoft" > /dev/null && ax_cv_version_has_microsoft=yes
     ax_cv_version_number=`echo ${ax_cv_version} | sed -n 's/.* \([[0-9]][[0-9.]]*\).*/\1/p'`
     $2
   else
