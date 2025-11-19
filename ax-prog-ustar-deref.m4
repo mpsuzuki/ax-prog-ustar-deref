@@ -122,6 +122,53 @@ AC_DEFUN([AX_CHECK_TAR_IS_GNU_1_12_OR_BSDTAR],[
 
 
 dnl
+dnl AX_CHECK_CPIO_IS_GNU_2_0_OR_BSDCPIO()
+dnl   $1 = command to be tested
+dnl   $2 = action if found to be GNU cpio >= 2.0
+dnl   $3 = action if not
+dnl
+dnl NOTE: GNU cpio "-H ustar" was introduced since 2.0
+dnl       although "-L" was already available in 1.5(?).
+dnl
+AC_DEFUN([AX_CHECK_CPIO_IS_GNU_2_0_OR_BSDCPIO],[
+  ax_cpio_is_gnu_2_0_or_bsdcpio=no
+  AC_MSG_CHECKING([whether $1 is GNU cpio 2.0 or later, or libarchive bsdcpio])
+  _AX_CHECK_VERSION([$1],[
+      if test "x${ax_have_version}" != xyes
+      then
+        :
+      else
+        case "x${ax_cv_version_lower}" in
+          *gnu*cpio*)
+            ax_gcpio_version_major=`echo ${ax_cv_version_number} | cut -f1 -d.`
+            if test ${ax_gcpio_version_major} -gt 1
+            then
+              AC_MSG_RESULT([yes, GNU cpio ${ax_cv_version_number}])
+              ax_cpio_is_gnu_2_0_or_bsdcpio=yes
+            fi
+            ;;
+          *bsdcpio*libarchive*)
+            AC_MSG_RESULT([yes, libarchive bsdcpio ${ax_cv_version_number}])
+            ax_cpio_is_gnu_2_0_or_bsdcpio=yes
+            ;;
+          *)
+            ;;
+        esac
+      fi
+    ])
+  if test "x${ax_cpio_is_gnu_2_0_or_bsdcpio}" = xyes
+  then
+    :
+    $2
+  else
+    AC_MSG_RESULT([no])
+    $3
+  fi
+])
+
+
+
+dnl
 dnl AX_CHECK_TAR_MAGIC()
 dnl   $1 = command to be tested, like "tar cf - conftest.txt"
 dnl   $2 = file to be removed after test, like "conftest.txt"
