@@ -74,6 +74,52 @@ AC_DEFUN([AX_CHECK_TAR_IS_GNU_1_12],[
 ])
 
 
+dnl
+dnl AX_CHECK_TAR_IS_GNU_1_12_OR_BSDTAR()
+dnl   $1 = command to be tested
+dnl   $2 = action if found to be GNU tar >= 1.12
+dnl   $3 = action if not
+dnl
+AC_DEFUN([AX_CHECK_TAR_IS_GNU_1_12_OR_BSDTAR],[
+  ax_tar_is_gnu_1_12_or_bsdtar=no
+  AC_MSG_CHECKING([whether $1 is GNU tar 1.12 or later, or libarchive bsdtar])
+  _AX_CHECK_VERSION([$1],[
+      if test "x${ax_have_version}" != xyes
+      then
+        :
+      else
+        case "x${ax_cv_version_lower}" in
+          *gnu*tar*)
+            ax_gtar_version_major=`echo ${ax_cv_version_number} | cut -f1 -d.`
+            ax_gtar_version_minor=`echo ${ax_cv_version_number} | cut -f2 -d.`
+            if test ${ax_gtar_version_major} -gt 1
+            then
+              AC_MSG_RESULT([yes, GNU tar ${ax_cv_version_number}])
+              ax_tar_is_gnu_1_12_or_bsdtar=yes
+            elif test ${ax_gtar_version_major} -eq 1 -a ${ax_gtar_version_minor} -ge 12
+            then
+              AC_MSG_RESULT([yes, GNU tar ${ax_cv_version_number}])
+              ax_tar_is_gnu_1_12_or_bsdtar=yes
+            fi
+            ;;
+          *bsdtar*libarchive*)
+            AC_MSG_RESULT([yes, libarchive bsdtar ${ax_cv_version_number}])
+            ax_tar_is_gnu_1_12_or_bsdtar=yes
+            ;;
+        esac
+      fi
+    ])
+  if test "x${ax_tar_is_gnu_1_12_or_bsdtar}" = xyes
+  then
+    :
+    $2
+  else
+    AC_MSG_RESULT([no])
+    $3
+  fi
+])
+
+
 
 dnl
 dnl AX_CHECK_TAR_MAGIC()
