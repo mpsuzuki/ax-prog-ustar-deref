@@ -2,9 +2,11 @@ AC_PREREQ([2.70])
 AC_INIT([ax-ustar], [0.0.20251118], [])
 AM_INIT_AUTOMAKE([1.11 foreign])
 
-AX_CHECK_TAR_IS_GNU_1_12_OR_BSDTAR([tar])
+AX_CHECK_TAR_IS_GNU_1_12([tar])
+# AX_CHECK_TAR_IS_GNU_1_12_OR_BSDTAR([tar])
+AX_CHECK_CPIO_IS_GNU_2_0_OR_BSDCPIO([cpio])
 
-AX_CMD_USTAR([cpio pax tar],[
+AX_CMD_USTAR([pax cpio tar],[
   TAR_CHF="${ax_cv_cmd}"
 ],[])
 
